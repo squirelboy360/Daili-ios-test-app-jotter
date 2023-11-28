@@ -6,56 +6,44 @@
 //
 
 import SwiftUI
-import SwiftData
 
-struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
-    var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+struct HomeView:View {
+    
+    let items:[Today] = [
+       
+    ]
+    
+    var body: some View{
+        NavigationView(content: {
+            List(0..<items.count){
+                item in
+                //show empty or content
+                    if(items.isEmpty){
+                        Text("Empty Journal").font(.largeTitle).foregroundStyle(.gray)
+                        return 
+                    }else{
+                        NavigationLink(destination:  DetailsView()){
+                            Text("S0mething")
+                        }
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+            }.navigationTitle(Text("Daili"))
+
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing){
                     EditButton()
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+                    ToolbarItem(placement: .topBarTrailing){
+                        Button(action:{}){
+                            Label("Add Journal",systemImage: "plus")
+                        }
                 }
             }
-        } detail: {
-            Text("Select an item")
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
+        )
     }
 }
 
+
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+    HomeView()
 }
